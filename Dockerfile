@@ -2,6 +2,21 @@ FROM python:3.12
 ENV DOCKER_WORKDIR="/app"
 WORKDIR $DOCKER_WORKDIR
 ENV PYTHONPATH="/app"
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Google Chrome
+RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable
+
 COPY pyproject.toml ./
 RUN pip install poetry
 RUN poetry config virtualenvs.create false

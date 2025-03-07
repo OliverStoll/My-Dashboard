@@ -16,7 +16,9 @@ package-mode = false
 python = "^3.11"
 python-dotenv = "^1.0.0"
 pyyaml = "^6.0.1"
-my-common-utils = "^0"
+chromedriver-binary-auto = "^0.3.1"
+webdriver-manager = "^4.0.2"
+my-common-utils = "^0.14.0"
 
 
 [tool.poetry.group.cloud.dependencies]

@@ -6,9 +6,17 @@ from dataclasses import dataclass
 from common_utils.web.scraper import DriverAction, SeleniumHandler
 from common_utils.apis.firebase import FirebaseClient
 
+from selenium.webdriver.chrome.service import Service
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+service = Service(ChromeDriverManager().install())
+options = webdriver.ChromeOptions()
+options.add_argument("--headless")
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
-
-load_dotenv()
+DRIVER = webdriver.Chrome(service=service, options=options)
 
 
 @dataclass
@@ -34,9 +42,10 @@ class WeightEntry:
 
 class SanitasDataScraper:
     firebase_path = "/DATA/Gewichtsdaten/Sanitas"
-    scraper = SeleniumHandler(headless=True)
+    scraper = SeleniumHandler(headless=True, download_driver=True)
 
     def __init__(self):
+        load_dotenv()
         self.firebase = FirebaseClient(realtime_db_url=os.environ["FIREBASE_REALTIME_DB_URL"])
 
     def run(self):
