@@ -1,6 +1,7 @@
 FROM python:3.12
 ENV DOCKER_WORKDIR="/app"
 WORKDIR $DOCKER_WORKDIR
+ENV PYTHONPATH="/app"
 COPY pyproject.toml ./
 RUN pip install poetry
 RUN poetry config virtualenvs.create false

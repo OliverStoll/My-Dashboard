@@ -61,40 +61,40 @@ cd docs/sphinx
 
 # How to Deploy to Cloud
 Replace the variables with your gcloud project, gcr repository name and the image name you want:
-  - `[PROJECT-ID]`
-  - `[REPO]`
-  - `[IMAGE]`
-  - `[REGION]`
+  - `notion-api-sync`
+  - `sanitas`
+  - `scraper`
+  - `us-west1`
 
 ### Set-up gcloud locally
 ```bash
 gcloud auth login # log in to gcloud
 ```
 ```bash
-gcloud auth configure-docker [REGION]-docker.pkg.dev # configure docker (only first time on device)
+gcloud auth configure-docker us-west1-docker.pkg.dev # configure docker (only first time on device)
 ```
 
 ### Create & push docker image
 ```bash
-docker build -t [REGION]-docker.pkg.dev/[PROJECT-ID]/[REPO]/[IMAGE] . # build docker image
+docker build -t us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper . # build docker image
 ```
 
 ```bash
-docker run -p 8080:8080 [REGION]-docker.pkg.dev/[PROJECT-ID]/[REPO]/[IMAGE] # test locally
+docker run -p 8080:8080 us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper # test locally
 ```
 
 ```bash
-docker push [REGION]-docker.pkg.dev/[PROJECT-ID]/[REPO]/[IMAGE]  # push to artifact registry
+docker push us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper  # push to artifact registry
 ```
 
 ### Deploy to Cloud Run using gcloud sdk:
 ```bash
 # we use image as service name and allow unauthenticated access
-gcloud run deploy [IMAGE]  --allow-unauthenticated --image=[REGION]-docker.pkg.dev/[PROJECT-ID]/[REPO]/[IMAGE]:latest --region=[REGION] --project=[PROJECT-ID]
+gcloud run deploy scraper  --allow-unauthenticated --image=us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper:latest --region=us-west1 --project=notion-api-sync
 ```
 
 ### Deploy on Cloud Compute (for persistent execution):
-- create a new VM instance on [REGION]
+- create a new VM instance on us-west1
 - check that the allow-ssh firewall rule is enabled (https://console.cloud.google.com/net-security/firewall-manager/firewall-policies/list)
 - SSH into the VM and install docker & gcloud
 ```bash
@@ -119,9 +119,9 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share
 sudo apt-get update
 sudo apt-get install -y google-cloud-sdk
 gcloud init
-gcloud auth configure-docker [REGION]-docker.pkg.dev # configure docker (only first time on device)
+gcloud auth configure-docker us-west1-docker.pkg.dev # configure docker (only first time on device)
 ```
 - run the docker image using the same docker run command
 ```bash
-docker run -p 8080:8080 [REGION]-docker.pkg.dev/[PROJECT-ID]/[REPO]/[IMAGE] 
+docker run -p 8080:8080 us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper 
 ```

@@ -6,6 +6,8 @@ from fastapi.responses import JSONResponse
 import os
 import uvicorn
 
+from src.sanitas import SanitasDataScraper
+
 
 app = FastAPI()
 
@@ -14,7 +16,8 @@ app = FastAPI()
 async def root():
     message = "Done"
     # TODO: call the method you want
-    return JSONResponse(content={"message": message})
+    data = SanitasDataScraper().run()
+    return JSONResponse(content={"message": message, "data": str(data)})
 
 
 if __name__ == "__main__":
