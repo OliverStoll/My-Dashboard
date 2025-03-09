@@ -23,6 +23,7 @@ class DiaroEntry:
 class DiaroScraper:
     log = create_logger("DiaroScraper")
     firebase_path = "/DATA/Tagebuch/Diaro"
+    weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
     def __init__(self) -> None:
         load_dotenv()
@@ -42,7 +43,7 @@ class DiaroScraper:
             DriverAction("send_keys", "input[name='password']", os.environ["DIARO_PASSWORD"]),
             DriverAction("click", "button.signin-button"),
             DriverAction("sleep", input=30),
-            DriverAction("get_texts", "a.EntryListItem"),
+            DriverAction("get_texts", "div.EntryListGroup"),
         ]
         diary_entry_strings = self.scraper.run_actions(actions)[0]
         return diary_entry_strings
@@ -51,16 +52,19 @@ class DiaroScraper:
         diary_entries = []
         for entry_string in diary_entry_strings:
             entry_parts = entry_string.split("\n")
-            day = entry_parts[1]
-            time = entry_parts[2]
-            text = entry_parts[3]
+            month, year = entry_parts[0].split(', ')
+            entry_parts = entry_parts[1:]
+            # split the rest of the entry into the different lists, delimited by weekdays
+            entry_lists = []
+            # find next weekday in the list
+            for i, part in enumerate(entry_parts):
+                if part in self.weekdays:
+                    entry_lists.append(entry_parts[:i])
+                    entry_parts = entry_parts[i:]
+            print()
 
-            entry = DiaroEntry(
 
-
-            )
-
-        print(diary_entry_strings)
+            print(diary_entry_strings)
         return []
 
 
