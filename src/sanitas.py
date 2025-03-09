@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from dataclasses import dataclass
 
-from common_utils.web.scraper import DriverAction, SeleniumHandler
+from common_utils.web.selenium import DriverAction, SeleniumHandler
 from common_utils.apis.firebase import FirebaseClient
 
 from selenium.webdriver.chrome.service import Service
@@ -68,10 +68,10 @@ class SanitasDataScraper:
             DriverAction("click", "#ContentPlaceHolder1_ctl00_ucBPFilter_lblFiltersYear"),
             DriverAction("sleep", input=4),
             DriverAction("click", "#ContentPlaceHolder1_ctl00_ucBPFilter_lnkBtnFiltersGo"),
-            DriverAction("get_text", "table#ScaleDataTblHeader > tbody > tr > td > table"),
+            DriverAction("get_text", "table#ScaleDataTblHeader > tbody > tr > td > table", key="table_text"),
         ]
 
-        table_text = self.scraper.run_actions(sanitas_actions)[0]
+        table_text = self.scraper.run_actions(sanitas_actions)['table_text']
         table_rows = table_text.replace(',', '.').split('\n')
         return table_rows
 

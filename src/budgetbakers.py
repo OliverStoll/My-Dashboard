@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, date as Date, timedelta
 
-from common_utils.web.scraper import DriverAction as Action, SeleniumHandler
+from common_utils.web.selenium import DriverAction as Action, SeleniumHandler
 from common_utils.apis.firebase import FirebaseClient
 from common_utils.config import load_dotenv
 
@@ -80,14 +80,14 @@ class BudgetBakersDataScraper:
             Action("sleep", input=15),
             Action("url", "https://web.budgetbakers.com/records"),
             Action("sleep", input=3),
-            Action("get_texts", "main > div > div:nth-child(2) > div:nth-child(2) > div > div > div"),
+            Action("get_texts", "main > div > div:nth-child(2) > div:nth-child(2) > div > div > div", key="records"),
             Action("sleep", input=1),
             Action("url", "https://web.budgetbakers.com/accounts"),
             Action("sleep", input=3),
-            Action("get_texts", "main > div > div:nth-child(2) > div:nth-child(2) > div > div"),
+            Action("get_texts", "main > div > div:nth-child(2) > div:nth-child(2) > div > div", key="balances"),
         ]
-        payments_data = self.scraper.run_actions(actions)[0]
-        balance_data = self.scraper.run_actions(actions)[1]
+        payments_data = self.scraper.run_actions(actions)['records']
+        balance_data = self.scraper.run_actions(actions)['balances']
         return payments_data, balance_data
 
     def clean_payments_data(self, data_rows: list[str]):
