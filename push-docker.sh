@@ -7,10 +7,10 @@ echo "Building Diaro..."
 docker build -t us-west1-docker.pkg.dev/notion-api-sync/my-data/diaro_scraper:latest -f ./Dockerfile-Diaro .
 
 echo "Building Budgetbakers..."
-docker build -t us-west1-docker.pkg.dev/notion-api-sync/my-data/budgetbakers_scraper:latest -f ./Dockerfile-BudgetBakers .
+docker build -t us-west1-docker.pkg.dev/notion-api-sync/my-data/budgetbakers_scraper:latest -f ./Dockerfile-Budgetbakers .
 
 echo "Building TickTick Habits..."
-docker build -t us-west1-docker.pkg.dev/notion-api-sync/my-data/ticktick_habits_scraper:latest -f ./Dockerfile-TickTickHabits .
+docker build -t us-west1-docker.pkg.dev/notion-api-sync/my-data/ticktick_habits_scraper:latest -f ./Dockerfile-TicktickHabits .
 
 
 
