@@ -6,18 +6,6 @@ from dataclasses import dataclass
 from common_utils.web.selenium import DriverAction, SeleniumHandler
 from common_utils.apis.firebase import FirebaseClient
 
-from selenium.webdriver.chrome.service import Service
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-service = Service(ChromeDriverManager().install())
-options = webdriver.ChromeOptions()
-options.add_argument("--headless")
-options.add_argument("--disable-gpu")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-
-DRIVER = webdriver.Chrome(service=service, options=options)
-
 
 @dataclass
 class WeightEntry:

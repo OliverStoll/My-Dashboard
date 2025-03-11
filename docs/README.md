@@ -62,8 +62,8 @@ cd docs/sphinx
 # How to Deploy to Cloud
 Replace the variables with your gcloud project, gcr repository name and the image name you want:
   - `notion-api-sync`
-  - `sanitas`
-  - `scraper`
+  - `my-data`
+  - `sanitas_scraper`
   - `us-west1`
 
 ### Set-up gcloud locally
@@ -76,21 +76,21 @@ gcloud auth configure-docker us-west1-docker.pkg.dev # configure docker (only fi
 
 ### Create & push docker image
 ```bash
-docker build -t us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper . # build docker image
+docker build -t us-west1-docker.pkg.dev/notion-api-sync/my-data/sanitas_scraper . # build docker image
 ```
 
 ```bash
-docker run -p 8080:8080 us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper # test locally
+docker run -p 8080:8080 us-west1-docker.pkg.dev/notion-api-sync/my-data/sanitas_scraper # test locally
 ```
 
 ```bash
-docker push us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper  # push to artifact registry
+docker push us-west1-docker.pkg.dev/notion-api-sync/my-data/sanitas_scraper  # push to artifact registry
 ```
 
 ### Deploy to Cloud Run using gcloud sdk:
 ```bash
 # we use image as service name and allow unauthenticated access
-gcloud run deploy scraper  --allow-unauthenticated --image=us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper:latest --region=us-west1 --project=notion-api-sync
+gcloud run deploy sanitas_scraper  --allow-unauthenticated --image=us-west1-docker.pkg.dev/notion-api-sync/my-data/sanitas_scraper:latest --region=us-west1 --project=notion-api-sync
 ```
 
 ### Deploy on Cloud Compute (for persistent execution):
@@ -123,5 +123,5 @@ gcloud auth configure-docker us-west1-docker.pkg.dev # configure docker (only fi
 ```
 - run the docker image using the same docker run command
 ```bash
-docker run -p 8080:8080 us-west1-docker.pkg.dev/notion-api-sync/sanitas/scraper 
+docker run -p 8080:8080 us-west1-docker.pkg.dev/notion-api-sync/my-data/sanitas_scraper 
 ```

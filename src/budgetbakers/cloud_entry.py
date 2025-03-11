@@ -5,20 +5,16 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import os
 import uvicorn
-from threading import Thread
 
-from src.sanitas import SanitasDataScraper
-from src.budgetbakers import BudgetBakersDataScraper
-
+from src.budgetbakers.budgetbakers import BudgetBakersDataScraper
 
 app = FastAPI()
 
 
 @app.get("/")
 async def root():
-    sanitas_data = SanitasDataScraper().run()
     budgetbakers_data = BudgetBakersDataScraper().run()
-    return JSONResponse(content={"message": "Run Sanitas & BudgetBakers scrapers", "sanitas_data": str(sanitas_data), "budgetbakers_data": str(budgetbakers_data)})
+    return JSONResponse(content={"message": "Run Budgetbaker scraper", "data": str(budgetbakers_data)})
 
 
 if __name__ == "__main__":
