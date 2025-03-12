@@ -79,11 +79,11 @@ class BudgetBakersDataScraper:
             Action("click", "button[type='submit']"),
             Action("sleep", input=15),
             Action("url", "https://web.budgetbakers.com/records"),
-            Action("sleep", input=3),
+            Action("sleep", input=5),
             Action("get_texts", "main > div > div:nth-child(2) > div:nth-child(2) > div > div > div", key="records"),
-            Action("sleep", input=1),
+            Action("sleep", input=2),
             Action("url", "https://web.budgetbakers.com/accounts"),
-            Action("sleep", input=3),
+            Action("sleep", input=5),
             Action("get_texts", "main > div > div:nth-child(2) > div:nth-child(2) > div > div", key="balances"),
         ]
         payments_data = self.scraper.run_actions(actions)['records']
