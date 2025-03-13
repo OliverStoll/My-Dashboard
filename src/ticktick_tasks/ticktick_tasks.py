@@ -104,11 +104,14 @@ class TickTickTasksScraper:
 
     def store_num_active_tasks_firebase(self, active_tasks):
         now = datetime.now(pytz.timezone("Europe/Berlin"))
-        current_date = now.strftime("%Y-%m-%d")
+        current_date = now.strftime("%Y-%m-%d") 
         hour = now.strftime("%H")
         minute = now.strftime("%M")
         ref = f"{self.firebase_path}/Aktive-Aufgaben-Stats/{current_date}/{hour}"
-        self.firebase.set_entry(ref=ref, data={minute: len(active_tasks)})
+        old_data = self.firebase.get_entry(ref=ref)
+        new_data = old_data if old_data else {}
+        new_data[minute] = len(active_tasks)
+        self.firebase.set_entry(ref=ref, data=new_data)
 
 
 if __name__ == "__main__":
