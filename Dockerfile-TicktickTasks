@@ -26,4 +26,4 @@ RUN poetry install --with cloud --without dev
 COPY . /app
 
 EXPOSE 8080
-CMD ["python", "./src/ticktick_habits/cloud_entry.py"]
+CMD ["python", "./src/ticktick_tasks/cloud_entry.py"]

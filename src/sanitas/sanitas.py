@@ -29,7 +29,7 @@ class WeightEntry:
 
 
 class SanitasDataScraper:
-    firebase_path = "/DATA/Gewichtsdaten/Sanitas"
+    firebase_path = "/DATA/Gewicht/Sanitas"
     scraper = SeleniumHandler(headless=True, download_driver=True)
 
     def __init__(self):
