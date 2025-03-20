@@ -42,7 +42,7 @@ class TicktickHabitsScraper:
         self.habit_handler = TicktickHabitHandler(cookies_path='ticktick-cookies.json')
         self.habits = None
 
-    def run(self, days_offset=30):
+    def run(self, days_offset=3000):
         self.habits, _ = self.habit_handler._get_all_habits_metadata()
         self.save_habits_metadata_to_firebase(self.habits)
         after_stamp = int((datetime.now() - timedelta(days=days_offset)).strftime("%Y%m%d"))
@@ -65,8 +65,8 @@ class TicktickHabitsScraper:
         return self.habits[habit_id]['name']
 
     def save_habit_entry_to_firebase(self, habit_entry: HabitEntry) -> None:
-        habit_name = self.get_habit_name(habit_entry.habit_id)
-        ref = f"{self.firebase_path}/Einträge/{habit_name}/{habit_entry.checkin_stamp}"
+        checkin_date = datetime.strptime(str(habit_entry.checkin_stamp), "%Y%m%d")
+        ref = f"{self.firebase_path}/Eintraege/{checkin_date.strftime('%Y-%m-%d')}/{habit_entry.habit_id}"
         self.firebase.set_entry(ref, habit_entry.to_dict())
 
     def save_habits_metadata_to_firebase(self, habits: dict):
