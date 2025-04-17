@@ -66,7 +66,7 @@ class TickTickTasksScraper:
 
     def __init__(self):
         load_dotenv()
-        self.habits_handler = TicktickHabitHandler(headless=True, download_driver=True)
+        self.habits_handler = TicktickHabitHandler(cookies_path='ticktick-cookies.json', headless=True, download_driver=True)
         self.headers = self.habits_handler.headers
         self.firebase = FirebaseClient(realtime_db_url=os.environ["FIREBASE_REALTIME_DB_URL"])
 

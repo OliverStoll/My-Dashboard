@@ -38,7 +38,7 @@ class DiaroScraper:
 
     def __init__(self) -> None:
         load_dotenv()
-        self.scraper = SeleniumHandler(headless=False, raise_exceptions=False, verbose=False)
+        self.scraper = SeleniumHandler(headless=True, raise_exceptions=False, verbose=True, download_driver=True)
         self.firebase = FirebaseClient(realtime_db_url=os.environ["FIREBASE_REALTIME_DB_URL"])
         self.driver = self.scraper.get_driver()
 
@@ -51,8 +51,9 @@ class DiaroScraper:
             DriverAction("url", "https://www.diaroapp.com/login"),
             DriverAction("send_keys", "input[name='email']", os.environ["DIARO_EMAIL"]),
             DriverAction("send_keys", "input[name='password']", os.environ["DIARO_PASSWORD"]),
+            DriverAction("sleep", input=2),
             DriverAction("click", "button.signin-button"),
-            DriverAction("sleep", input=20),
+            DriverAction("sleep", input=2),
             DriverAction("click", "a.EntryListItem"),
             DriverAction("sleep", input=2),
         ]

@@ -9,11 +9,12 @@ import uvicorn
 from src.diaro.diaro import DiaroScraper
 
 app = FastAPI()
-
+scraper = DiaroScraper()
 
 @app.get("/")
 async def root():
-    diaro_data = DiaroScraper().run()
+    print("Run Diaro scraper")
+    diaro_data = scraper.run()
     return JSONResponse(content={"message": "Run Diaro scraper", "data": str(diaro_data)})
 
 
