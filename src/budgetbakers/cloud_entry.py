@@ -9,11 +9,11 @@ import uvicorn
 from src.budgetbakers.budgetbakers import BudgetBakersDataScraper
 
 app = FastAPI()
-
+scraper = BudgetBakersDataScraper()
 
 @app.get("/")
 async def root():
-    budgetbakers_data = BudgetBakersDataScraper().run()
+    budgetbakers_data = scraper.run()
     return JSONResponse(content={"message": "Run Budgetbaker scraper", "data": str(budgetbakers_data)})
 
 

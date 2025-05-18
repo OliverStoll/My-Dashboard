@@ -10,12 +10,13 @@ from src.sanitas.sanitas import SanitasDataScraper
 
 
 app = FastAPI()
+scraper = SanitasDataScraper()
 
 
 @app.get("/")
 async def root():
     print("Run Sanitas scraper")
-    sanitas_data = SanitasDataScraper().run()
+    sanitas_data = scraper.run()
     return JSONResponse(content={"message": "Run Sanitas scraper", "sanitas_data": str(sanitas_data)})
 
 
