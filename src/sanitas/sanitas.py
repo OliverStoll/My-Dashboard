@@ -30,7 +30,11 @@ class WeightEntry:
 
 class SanitasDataScraper:
     firebase_path = "/DATA/Gewicht/Sanitas"
-    scraper = SeleniumHandler(headless=True, download_driver=True)
+    headless = bool(os.getenv('DEBUG', True))
+    scraper = SeleniumHandler(
+        headless=headless,
+        download_driver=True
+    )
 
     def __init__(self):
         load_dotenv()
@@ -55,15 +59,19 @@ class SanitasDataScraper:
             DriverAction("url", value="https://connect.sanitas-online.de/HealthCoach/Modules/Devices/ScaleDataInfo.aspx"),
             DriverAction("sleep", value=3),
             DriverAction("click", css_identifier="#ui-id-7"),
-            DriverAction("sleep", value=4),
+            DriverAction("sleep", value=3),
             DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_ucBPFilter_lblFiltersYear"),
-            DriverAction("sleep", value=4),
+            DriverAction("sleep", value=3),
             DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_ucBPFilter_lnkBtnFiltersGo"),
-            DriverAction("sleep", value=4),
-            DriverAction("get_text", css_identifier="table#ScaleDataTblHeader > tbody > tr > td > table", result_key="table_text"),
+            DriverAction("sleep", value=3),
+            DriverAction("get_text", css_identifier="table#ScaleDataTblHeader > tbody > tr > td > table", result_key="table_text_start"),
+            DriverAction("scroll_down", value=1000, css_identifier='.fht-tbody.ps-container'),
+            DriverAction("sleep", value=1),
+            DriverAction("get_text", css_identifier="table#ScaleDataTblHeader > tbody > tr > td > table", result_key="table_text_end"),
         ]
 
-        table_text = self.scraper.run_actions(sanitas_actions)['table_text']
+        results = self.scraper.run_actions(sanitas_actions)
+        table_text = results.get('table_text_start', '') + results.get('table_text_end', '')
         table_rows = table_text.replace(',', '.').split('\n')
         return table_rows
 
