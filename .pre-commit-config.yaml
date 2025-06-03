@@ -20,5 +20,5 @@ repos:
     rev: v1.8.0
     hooks:
       - id: mypy
-        args: [--ignore-missing-imports]
-        additional_dependencies: [types-pyyaml, types-requests]
+        args: [--explicit-package-bases, --ignore-missing-imports]
+        additional_dependencies: [types-pyyaml, types-requests, types-pytz]

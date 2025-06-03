@@ -18,7 +18,7 @@ async def root():
 
 
 if __name__ == "__main__":
-    port = os.getenv("PORT", 8080)
+    port = int(os.getenv("PORT", 8080))
     host = "0.0.0.0"
     print(f"Test locally on http://localhost:{port}")
     uvicorn.run(app, host=host, port=port)
