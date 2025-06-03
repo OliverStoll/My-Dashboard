@@ -20,7 +20,7 @@ RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-ke
 COPY pyproject.toml ./
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
-RUN poetry install --with cloud --without dev
+RUN poetry install --with cloud
 # make sure the following line is still "COPY . /app"
 # (sometimes gets changed when moving files)
 COPY . /app
