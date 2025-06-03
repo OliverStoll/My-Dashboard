@@ -30,7 +30,7 @@ class WeightEntry:
 
 class SanitasDataScraper:
     firebase_path = "/DATA/Gewicht/Sanitas"
-    scraper = SeleniumHandler(headless=False, download_driver=True)
+    scraper = SeleniumHandler(headless=True, download_driver=True)
 
     def __init__(self):
         load_dotenv()
@@ -59,6 +59,7 @@ class SanitasDataScraper:
             DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_ucBPFilter_lblFiltersYear"),
             DriverAction("sleep", value=4),
             DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_ucBPFilter_lnkBtnFiltersGo"),
+            DriverAction("sleep", value=4),
             DriverAction("get_text", css_identifier="table#ScaleDataTblHeader > tbody > tr > td > table", result_key="table_text"),
         ]
 
@@ -67,11 +68,14 @@ class SanitasDataScraper:
         return table_rows
 
 
-    def clean_sanitas_data(self, table_rows: list[str]) -> list[WeightEntry]:
+    @staticmethod
+    def clean_sanitas_data(table_rows: list[str]) -> list[WeightEntry]:
         """ Convert table text to list of dicts """
         scale_data_list = []
         for row in table_rows:
             row_data = row.split(' ')
+            if len(row_data) < 3:
+                continue
             scale_data = WeightEntry(
                 date=datetime.strptime(f"{row_data[0]} {row_data[1]}", '%d.%m.%Y %H:%M'),
                 weight=float(row_data[2]),
