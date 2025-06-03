@@ -30,7 +30,7 @@ class WeightEntry:
 
 class SanitasDataScraper:
     firebase_path = "/DATA/Gewicht/Sanitas"
-    scraper = SeleniumHandler(headless=True, download_driver=True)
+    scraper = SeleniumHandler(headless=False, download_driver=True)
 
     def __init__(self):
         load_dotenv()
@@ -45,18 +45,21 @@ class SanitasDataScraper:
     def get_sanitas_data(self) -> list[str]:
         sanitas_actions = [
             # login
-            DriverAction("url", "https://connect.sanitas-online.de/HealthCoach/Default.aspx"),
-            DriverAction("send_keys", "#ContentPlaceHolder1_ctl00_txtUserName", os.environ["SANITAS_EMAIL"]),
-            DriverAction("send_keys", "#ContentPlaceHolder1_ctl00_txtPassword", os.environ["SANITAS_PASSWORD"]),
-            DriverAction("click", "#ContentPlaceHolder1_ctl00_lnkLogin"),
+            DriverAction("url", value="https://connect.sanitas-online.de/HealthCoach/Default.aspx"),
+            DriverAction("send_keys", css_identifier="#ContentPlaceHolder1_ctl00_txtUserName", value=os.environ["SANITAS_EMAIL"]),
+            DriverAction("send_keys", css_identifier="#ContentPlaceHolder1_ctl00_txtPassword", value=os.environ["SANITAS_PASSWORD"]),
+            DriverAction("sleep", value=1),
+            DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_lnkLogin"),
+            DriverAction("sleep", value=1),
             # navigate to data
-            DriverAction("url", "https://connect.sanitas-online.de/HealthCoach/Modules/Devices/ScaleDataInfo.aspx"),
-            DriverAction("click", "#ui-id-7"),
-            DriverAction("sleep", input=4),
-            DriverAction("click", "#ContentPlaceHolder1_ctl00_ucBPFilter_lblFiltersYear"),
-            DriverAction("sleep", input=4),
-            DriverAction("click", "#ContentPlaceHolder1_ctl00_ucBPFilter_lnkBtnFiltersGo"),
-            DriverAction("get_text", "table#ScaleDataTblHeader > tbody > tr > td > table", key="table_text"),
+            DriverAction("url", value="https://connect.sanitas-online.de/HealthCoach/Modules/Devices/ScaleDataInfo.aspx"),
+            DriverAction("sleep", value=3),
+            DriverAction("click", css_identifier="#ui-id-7"),
+            DriverAction("sleep", value=4),
+            DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_ucBPFilter_lblFiltersYear"),
+            DriverAction("sleep", value=4),
+            DriverAction("click", css_identifier="#ContentPlaceHolder1_ctl00_ucBPFilter_lnkBtnFiltersGo"),
+            DriverAction("get_text", css_identifier="table#ScaleDataTblHeader > tbody > tr > td > table", result_key="table_text"),
         ]
 
         table_text = self.scraper.run_actions(sanitas_actions)['table_text']
