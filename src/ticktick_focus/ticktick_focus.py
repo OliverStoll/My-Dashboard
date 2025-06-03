@@ -13,9 +13,9 @@ class TickTickFocusTime:
     id: str
     startTime: str | datetime
     endTime: str | datetime
-    status: int
     pauseDuration: int
     type: int
+    status: int | None = None
     totalDuration: int | None = None
 
     def __post_init__(self):
@@ -45,7 +45,8 @@ class TickTickFocusScraper:
 
     def __init__(self):
         load_dotenv()
-        self.habits_handler = TicktickHabitHandler(headless=True, download_driver=True)
+
+        self.habits_handler = TicktickHabitHandler(headless=True, download_driver=True, cookies_path='ticktick-cookies.json')
         self.headers = self.habits_handler.headers
         self.firebase = FirebaseClient(realtime_db_url=os.environ["FIREBASE_REALTIME_DB_URL"])
 
@@ -55,10 +56,14 @@ class TickTickFocusScraper:
         return focus_times
 
     def get_focus(self) -> list[TickTickFocusTime]:
-        url = "https://api.ticktick.com/api/v2/pomodoros/timeline"
-        response = self._make_get_request(url)
-        focus_times = [TickTickFocusTime.from_dict(focus_time) for focus_time in response]
-        return focus_times
+        all_focus_times = []
+        for total_months in range(10):
+            timestamp = int((datetime.now() - timedelta(days=30 * total_months)).timestamp() * 1000)
+            url = f"https://api.ticktick.com/api/v2/pomodoros/timeline?to={timestamp}"
+            response = self._make_get_request(url)
+            focus_times = [TickTickFocusTime.from_dict(focus_time) for focus_time in response]
+            all_focus_times.extend(focus_times)
+        return all_focus_times
 
     def _make_get_request(self, url):
         response = requests.get(url, headers=self.headers)
@@ -72,7 +77,9 @@ class TickTickFocusScraper:
         for focus_day in focus_days:
             focus_times_map = {focus_time['startTime'].split(' ')[1]: focus_time for focus_time in focus_times_data if focus_time["startTime"].split(" ")[0] == focus_day}
             focus_days_map[focus_day] = focus_times_map
-        self.firebase.set_entry(ref=self.firebase_path, data=focus_days_map)
+        for focus_day_date, focus_day_entry in focus_days_map.items():
+            focus_day_ref = f"{self.firebase_path}/{focus_day_date}"
+            self.firebase.set_entry(ref=focus_day_ref, data=focus_day_entry)
 
 
 if __name__ == "__main__":
