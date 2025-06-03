@@ -38,3 +38,6 @@ deploy:
 		gcloud run deploy $(service)-scraper --allow-unauthenticated \
 		--image=$(GCLOUD_REGION)-docker.pkg.dev/$(GCLOUD_PROJECT_ID)/$(GCLOUD_REPO)/$(service):latest \
 		--region=$(GCLOUD_REGION) --project=$(GCLOUD_PROJECT_ID) --memory=$(MEMORY))
+
+
+all: auth-docker build push deploy
