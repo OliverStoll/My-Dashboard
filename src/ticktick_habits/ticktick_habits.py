@@ -1,33 +1,9 @@
 import os
-from threading import Thread
-from dataclasses import dataclass
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 
-from common_utils.apis.ticktick.habits import TicktickHabitHandler
+from common_utils.apis.ticktick.habits import TicktickHabitHandler, TickTickHabitEntry
 from common_utils.config import load_dotenv
 from common_utils.apis.firebase import FirebaseClient
-
-
-@dataclass
-class HabitEntry:
-    id: str
-    habit_id: str
-    checkin_stamp: int
-    value: int
-    goal: int
-    status: int
-    checkin_time: str | None = None
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "habit_id": self.habit_id,
-            "checkin_stamp": self.checkin_stamp,
-            "checkin_time": self.checkin_time,
-            "value": self.value,
-            "goal": self.goal,
-            "status": self.status
-        }
 
 
 class TicktickHabitsScraper:
@@ -37,60 +13,45 @@ class TicktickHabitsScraper:
         load_dotenv()
         self.firebase = FirebaseClient(realtime_db_url=os.environ["FIREBASE_REALTIME_DB_URL"])
         self.habit_handler = TicktickHabitHandler(
-            cookies_path='ticktick-cookies.json', headless=True, download_driver=True
+            cookies_path="ticktick-cookies.json", headless=True, download_driver=True
         )
         self.habits = None
 
     def run(self, days_offset=10):
         self.habits, _ = self.habit_handler._get_all_habits_metadata()
-        habits_thread = self.threaded_save_habits_metadata_to_firebase(self.habits)
+        self.save_habits_metadata_to_firebase(self.habits)
+
         after_stamp = int((datetime.now() - timedelta(days=days_offset)).strftime("%Y%m%d"))
-        habit_entries_data = self.habit_handler.get_all_checkins(after_stamp=after_stamp)
-        habit_entries = []
-        threads = [habits_thread]
-        for data in habit_entries_data:
-            habit_entry = HabitEntry(
-                id=data['id'],
-                habit_id=data['habitId'],
-                checkin_stamp=data['checkinStamp'],
-                checkin_time=data.get('checkinTime'),
-                value=data['value'],
-                goal=data['goal'],
-                status=data['status']
-            )
-            habit_entries.append(habit_entry)
-            thread = self.threaded_save_habit_entry_to_firebase(habit_entry)
-            threads.append(thread)
+        all_habits_entries = self.habit_handler.get_all_checkins(after_stamp=after_stamp)
 
-        for thread in threads:
-            thread.join()
+        all_habit_entries_flat = []
+        for habit_id, habit_entries in all_habits_entries.items():
+            all_habit_entries_flat += habit_entries
 
-        return habit_entries
+        self.save_habit_entries_to_firebase(all_habit_entries_flat)
 
-    def get_habit_name(self, habit_id: str) -> str:
-        return self.habits[habit_id]['name']
+        return all_habits_entries
 
-    def threaded_save_habit_entry_to_firebase(self, habit_entry: HabitEntry) -> Thread:
-        thread = Thread(target=self._save_habit_entry_to_firebase, args=[habit_entry])
-        thread.start()
-        return thread
+    def save_habit_entries_to_firebase(self, habit_entries: list[TickTickHabitEntry]) -> None:
+        ref = f"{self.firebase_path}/Eintraege"
+        payload: dict[str, dict[str, dict]] = {}
+        for habit_entry in habit_entries:
+            checkin_date_obj = datetime.strptime(str(habit_entry.checkin_stamp), "%Y%m%d")
+            checkin_date = checkin_date_obj.strftime("%Y-%m-%d")
+            if checkin_date not in payload.keys():
+                payload[checkin_date] = {}
+            payload[checkin_date][habit_entry.habit_id] = habit_entry.model_dump()
+        self.firebase.update(ref=ref, data=payload)
 
-    def threaded_save_habits_metadata_to_firebase(self, habits: dict) -> Thread:
-        thread = Thread(target=self._save_habits_metadata_to_firebase, args=[habits])
-        thread.start()
-        return thread
-
-    def _save_habit_entry_to_firebase(self, habit_entry: HabitEntry) -> None:
-        checkin_date = datetime.strptime(str(habit_entry.checkin_stamp), "%Y%m%d")
-        ref = f"{self.firebase_path}/Eintraege/{checkin_date.strftime('%Y-%m-%d')}/{habit_entry.habit_id}"
-        self.firebase.set_entry(ref, habit_entry.to_dict())
-
-    def _save_habits_metadata_to_firebase(self, habits: dict):
-        for id, habit in habits.items():
-            self.firebase.set_entry(ref=f"{self.firebase_path}/Habits/{id}", data=habit)
+    def save_habits_metadata_to_firebase(self, habits: dict):
+        ref = f"{self.firebase_path}/Habits"
+        payload = {}
+        for habit_id, habit in habits.items():
+            payload[habit_id] = habit
+        self.firebase.update(ref=ref, data=payload)
 
 
 if __name__ == "__main__":
     scraper = TicktickHabitsScraper()
-    habits = scraper.run()
-    print(habits)
+    habits_ = scraper.run()
+    print(habits_)

@@ -19,7 +19,7 @@ pyyaml = "^6.0.1"
 chromedriver-binary-auto = "^0.3.1"
 webdriver-manager = "^4.0.2"
 undetected-chromedriver = "^3.5.5"
-my-common-utils = {extras = ["windows"], version = "^0.28.2"}
+my-common-utils = "0.30.2"
 
 
 [tool.poetry.group.cloud.dependencies]
