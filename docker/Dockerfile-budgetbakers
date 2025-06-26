@@ -26,4 +26,4 @@ RUN poetry install --with cloud
 COPY . /app
 
 EXPOSE 8080
-CMD ["python", "./src/budgetbakers/cloud_entry.py"]
+CMD ["python", "./backend/budgetbakers/cloud_entry.py"]

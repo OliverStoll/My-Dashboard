@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <!-- Dashboard Frame -->
+    <rect x="4" y="4" width="56" height="56" rx="6" fill="#e0e0e0" stroke="#333" stroke-width="2"/>
+    <!-- Header Bar -->
+    <rect x="8" y="8" width="48" height="10" rx="2" fill="#bbb"/>
+    <!-- Left Panel -->
+    <rect x="8" y="22" width="26" height="30" rx="2" fill="#ccc"/>
+    <!-- Right Panels -->
+    <rect x="38" y="22" width="14" height="14" rx="2" fill="#ccc"/>
+    <rect x="38" y="40" width="14" height="12" rx="2" fill="#ccc"/>
+</svg>

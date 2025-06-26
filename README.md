@@ -17,6 +17,7 @@ Backend data collection from different data sources
 The repository contains multiple Dockerfiles, each dedicated to one data source.
 To use, you only need to build, push and publish the images to gloud run.
 
+## Backend
 
 ### Installation
 
@@ -34,3 +35,7 @@ _All commands can be executed for a specific service using_ ` SERVICES=[service]
 - make (windows installable via `choco install make` with priviledges)
 - gcloud sdk
 - docker
+
+## Frontend
+
+### Installation

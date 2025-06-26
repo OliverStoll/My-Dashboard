@@ -38,7 +38,9 @@ init-project:
 
 ######   SERVICE NAMES   #####
 
+all: build-push-deploy
 build-push-deploy: auth-docker build push deploy
+
 
 # Authenticate docker for google artifact server
 auth-docker:
